@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AnimeVerse Finder</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Segoe UI,sans-serif;
+}
+
+body{
+    background:#0f172a;
+    color:white;
+    min-height:100vh;
+}
+
+header{
+    text-align:center;
+    padding:30px;
+}
+
+header h1{
+    font-size:2.5rem;
+}
+
+header p{
+    color:#94a3b8;
+    margin-top:10px;
+}
+
+.search-box{
+    display:flex;
+    justify-content:center;
+    gap:10px;
+    margin:20px;
+    flex-wrap:wrap;
+}
+
+input{
+    width:300px;
+    padding:12px;
+    border:none;
+    border-radius:10px;
+    font-size:16px;
+}
+
+button{
+    padding:12px 20px;
+    border:none;
+    border-radius:10px;
+    background:#7c3aed;
+    color:white;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+button:hover{
+    background:#6d28d9;
+}
+
+.card{
+    max-width:900px;
+    margin:30px auto;
+    background:#1e293b;
+    border-radius:20px;
+    padding:20px;
+    display:none;
+    gap:20px;
+    flex-wrap:wrap;
+}
+
+.card img{
+    width:250px;
+    border-radius:15px;
+}
+
+.info{
+    flex:1;
+}
+
+.info h2{
+    margin-bottom:10px;
+}
+
+.info p{
+    margin:10px 0;
+    line-height:1.6;
+}
+
+.rating{
+    color:gold;
+    font-weight:bold;
+}
+
+.verdict{
+    margin-top:15px;
+    padding:12px;
+    border-radius:10px;
+    background:#334155;
+}
+
+footer{
+    text-align:center;
+    padding:30px;
+    color:#64748b;
+}
+</style>
+</head>
+<body>
+
+<header>
+<h1>🎌 AnimeVerse Finder</h1>
+<p>Search any anime and see if it's worth watching.</p>
+</header>
+
+<div class="search-box">
+<input type="text" id="animeInput" placeholder="Enter anime name...">
+<button onclick="searchAnime()">Search</button>
+</div>
+
+<div id="animeCard" class="card">
+<img id="poster" src="" alt="Anime Poster">
+
+<div class="info">
+<h2 id="title"></h2>
+
+<p class="rating" id="score"></p>
+
+<p><b>Episodes:</b> <span id="episodes"></span></p>
+
+<p><b>Genre:</b> <span id="genres"></span></p>
+
+<p><b>Synopsis:</b></p>
+<p id="synopsis"></p>
+
+<div class="verdict">
+<b>Worth Watching?</b>
+<p id="verdict"></p>
+</div>
+
+</div>
+</div>
+
+<footer>
+Made by Anime Fans ❤️
+</footer>
+
+<script>
+
+async function searchAnime(){
+
+let anime=document.getElementById("animeInput").value;
+
+if(anime===""){
+alert("Enter anime name");
+return;
+}
+
+let response=await fetch(
+`https://api.jikan.moe/v4/anime?q=${anime}&limit=1`
+);
+
+let data=await response.json();
+
+if(!data.data.length){
+alert("Anime not found");
+return;
+}
+
+let a=data.data[0];
+
+document.getElementById("animeCard").style.display="flex";
+
+document.getElementById("poster").src=
+a.images.jpg.large_image_url;
+
+document.getElementById("title").innerText=
+a.title;
+
+document.getElementById("score").innerText=
+"⭐ Rating: "+a.score+"/10";
+
+document.getElementById("episodes").innerText=
+a.episodes || "Unknown";
+
+document.getElementById("genres").innerText=
+a.genres.map(g=>g.name).join(", ");
+
+document.getElementById("synopsis").innerText=
+a.synopsis;
+
+let verdict="";
+
+if(a.score>=8.5){
+verdict="🔥 Must Watch! Highly rated by anime fans.";
+}
+else if(a.score>=7){
+verdict="✅ Good anime. Worth giving a try.";
+}
+else{
+verdict="⚠️ Only watch if the genre interests you.";
+}
+
+document.getElementById("verdict").innerText=
+verdict;
+}
+</script>
+
+</body>
+</html>
